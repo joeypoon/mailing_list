@@ -1,4 +1,6 @@
 class SubscribersController < ApplicationController
+  protect_from_forgery with: :null_session
+
   def index
     @subscribers = Subscriber.subscribed
     render json: @subscribers.to_json(only: :email)
@@ -7,6 +9,7 @@ class SubscribersController < ApplicationController
   def create
     @subscriber = Subscriber.new params.require(:subscriber).permit(:email)
     if @subscriber.save
+      SubscriberMailer.subscribed(@subscriber).deliver
       render json: @subscriber.to_json(only: :email), status: 201
     else
       render json: @subscriber.errors, status: 422
