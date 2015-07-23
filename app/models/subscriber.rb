@@ -1,5 +1,6 @@
 class Subscriber < ActiveRecord::Base
-  validates :email, presense: true
+
+  validates :email, presence: true
 
   scope :subscribed, -> { where(deleted: false) }
 end
