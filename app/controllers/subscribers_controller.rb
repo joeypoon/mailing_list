@@ -7,7 +7,14 @@ class SubscribersController < ApplicationController
   end
 
   def create
-    @subscriber = Subscriber.new params.require(:subscriber).permit(:email)
+    @subscriber =
+      if subscriber = Subscriber.find_by(email: subscriber_params[:email])
+        subscriber.deleted = false
+        subscriber
+      else
+        Subscriber.new subscriber_params
+      end
+
     if @subscriber.save
       SubscriberMailer.subscribed(@subscriber).deliver
       render json: @subscriber.to_json(only: :email), status: 201
@@ -18,10 +25,17 @@ class SubscribersController < ApplicationController
 
   def destroy
     @subscriber = Subscriber.find params[:id]
-    if @subscriber.deleted = true
+    @subscriber.deleted = true
+    if @subscriber.save
       render json: { success: "#{@subscriber.email} removed from mailing list." }, status: 200
     else
       render json: @subscriber.errors, status: 422
     end
   end
+
+  private
+
+    def subscriber_params
+      params.require(:subscriber).permit(:email)
+    end
 end
