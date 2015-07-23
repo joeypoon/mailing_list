@@ -11,6 +11,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'faker'
 gem 'rack-cors', :require => 'rack/cors'
+gem 'dotenv-rails'
 
 group :development, :test do
   gem 'pry'
